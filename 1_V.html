@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crash Game</title>
+    <style>
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+        #multiplier {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        #button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1 id="multiplier">1.0x</h1>
+        <div id="button-container">
+            <button id="cashout">Cash Out</button>
+            <button id="start">Start Game</button>
+        </div>
+    </div>
+    <script>
+        const multiplierDisplay = document.getElementById('multiplier');
+        const cashoutButton = document.getElementById('cashout');
+        const startButton = document.getElementById('start');
+
+        let isGameRunning = false;
+        let currentMultiplier = 1.0;
+        let intervalId = null;
+
+        cashoutButton.disabled = true;
+
+        function updateMultiplier() {
+            currentMultiplier += 0.01;
+            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        }
+
+        function startGame() {
+            if (isGameRunning) return;
+
+            isGameRunning = true;
+            cashoutButton.disabled = false;
+            startButton.disabled = true;
+
+            intervalId = setInterval(updateMultiplier, 100);
+            
+            setTimeout(() => {
+                clearInterval(intervalId);
+                isGameRunning = false;
+                cashoutButton.disabled = true;
+                startButton.disabled = false;
+                alert(`Game Over! Multiplier: ${currentMultiplier.toFixed(2)}x`);
+                currentMultiplier = 1.0;
+            }, Math.floor(Math.random() * 10000) + 5000); // Simulate random crash between 5-15 seconds
+        }
+
+        cashoutButton.addEventListener('click', () => {
+            if (!isGameRunning) return;
+            clearInterval(intervalId);
+            isGameRunning = false;
+            alert(`Cashed Out! Multiplier: ${currentMultiplier.toFixed(2)}x`);
+            currentMultiplier = 1.0;
+        });
+
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Image</title>
+<style>
+	body {
+		background-color: #0E0E0E;
+	}
+
+    #container {
+        position: relative;
+        width: 680px;
+        height: 300px;
+
+		background-image: url('bg.png');
+		background-size: cover; /* Adjust as needed */
+		background-position: center; /* Adjust as needed */
+		background-repeat: no-repeat; /* Adjust as needed */
+		}
+
+    #movingImage {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+	#pastround {
+	    width: 680px;
+        height: 41px;
+		background-image: url('up.png');
+		background-size: cover; /* Adjust as needed */
+		background-position: center; /* Adjust as needed */
+		background-repeat: no-repeat; /* Adjust as needed */
+	}
+	
+		#placebet {
+	    width: 680px;
+        height: 171px;
+		background-image: url('cp.png');
+		background-size: cover; /* Adjust as needed */
+		background-position: center; /* Adjust as needed */
+		background-repeat: no-repeat; /* Adjust as needed */
+	}
+	
+		#resultup {
+	color: #FFFFFF;
+	}
+	
+	#starting {
+	border: none; /* 1px solid black border */
+    background: none; /* No background color */
+
+	width: 168px;
+	height: 80px;
+
+	margin-top: 63px; /* 20 pixels margin from the top */
+	margin-left: 157px; /* 30 pixels margin from the left 
+	}
+</style>
+</head>
+<body>
+<div id="pastround"></div>
+<div id="container">
+    <img id="movingImage" src="air.svg" width="140" height="60">
+</div>
+<div id="placebet"><button id="starting"></button></div>
+
+<div id="resultup"></div>
+
+
+
+<script>
+    // Get references to the container and the image
+    var container = document.getElementById("container");
+    var image = document.getElementById("movingImage");
+
+    // Function to reset image position to bottom left corner
+    function resetImagePosition() {
+        image.style.left = "0px";
+        image.style.bottom = "0px";
+    }
+	
+	// Function to move the image
+    function moveImage() {
+        // Reset image position to bottom left corner
+        resetImagePosition();
+
+        // Generate random target position on x-axis and y-axis
+        var targetX = Math.floor(Math.random() * (container.offsetWidth - image.width));
+        var targetY = Math.floor(Math.random() * (container.offsetHeight - image.height));
+		
+		console.log(targetX)
+
+		// Function to move the image towards the target position
+        function animate() {
+            var currentX = parseInt(image.style.left);
+            var currentY = parseInt(image.style.bottom);
+
+            var distanceX = targetX - currentX;
+            var distanceY = targetY - currentY;
+            
+            var speed = 0.1; // pixels per millisecond
+            
+            // Calculate duration based on the distance to be covered along the x-axis
+            var durationX = Math.abs(distanceX) / speed;
+
+            // Move the image towards the target position
+            var startTime = performance.now();
+
+            function frame() {
+                var timePassed = performance.now() - startTime;
+                var progress = timePassed / durationX;
+				
+				var upFn = currentX + distanceX * progress;
+				resultupFn(upFn);
+
+				if (progress > 1) progress = 1;
+
+                image.style.left = currentX + distanceX * progress + "px";
+                image.style.bottom = currentY + distanceY * progress + "px";
+
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                }
+            }
+
+            requestAnimationFrame(frame);
+        }
+
+        // Start moving the image
+        animate();
+    }
+
+    // Add event listener to the button
+    document.getElementById("starting").addEventListener("click", function() {
+        // Move the image
+        moveImage();
+    });
+	
+	function resultupFn(up) {
+    var div = document.getElementById("resultup");
+    div.innerText = Math.floor(up) + 'X';
+	}
+	
+	function lastRounds() {
+    // Create a new div element
+    var newDiv = document.createElement("div");
+
+    // Create text node for the content
+    var newText = document.createTextNode("This is the text inside the new div.");
+
+    // Append the text node to the new div
+    newDiv.appendChild(newText);
+
+    // Get the div with id "result"
+    var resultDiv = document.getElementById("result");
+
+    // Append the new div to the result div
+    resultDiv.appendChild(newDiv);
+}
+</script>
+
+</body>
+</html>

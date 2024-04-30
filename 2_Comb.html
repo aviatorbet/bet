@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crash Game</title>
+    <style>
+	body
+	{
+	background-color: #252942;
+	}
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90vw;
+            height: 90vh;
+        }
+        #multiplier {
+            font-size: 3rem;
+            font-weight: bold;
+	color : #FFFFFF;
+        }
+        #button-container {
+            margin-top: 20px;
+        }
+        canvas {
+            border: 1px solid #000;
+            margin-top: 20px;
+	background-color:  #2A3057;
+        }
+    </style>
+</head>
+<body>
+<img src="logo_KE.png" width="96px" height="35px">
+    <div id="game-container">
+        <h1 id="multiplier">1.0x</h1>
+        <div id="button-container">
+            <button id="cashout">Cash Out</button>
+            <button id="start">Start Game</button>
+        </div>
+	<canvas id="graphCanvas" width="800" height="400"></canvas>
+<img id="icon" width="140px" height="60px" src="icon.svg" style="position: absolute; display: none;">
+	</div>
+
+    <script>
+        const multiplierDisplay = document.getElementById('multiplier');
+        const cashoutButton = document.getElementById('cashout');
+        const startButton = document.getElementById('start');
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let isGameRunning = false;
+        let currentMultiplier = 1.0;
+        let intervalId = null;
+        let graphData = [];
+        let graphSpeed = 10;
+        let crashPoint = 1000;
+
+        cashoutButton.disabled = true;
+
+const icon = document.getElementById('icon');
+icon.style.display = 'block';
+
+function updateIconPosition() {
+    const iconX = graphData.length - 1; // X-coordinate based on the latest graph data point
+    const iconY = canvas.height - graphData[graphData.length - 1]; // Y-coordinate based on the latest graph data point
+    icon.style.left = `${iconX}px`; // Set the left position of the icon
+    icon.style.top = `${iconY}px`; // Set the top position of the icon
+}
+
+        function updateMultiplier() {
+            currentMultiplier += 0.01;
+            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        }
+
+        function drawGraph() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the graph line
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+	ctx.strokeStyle = 'RED'; // Set graph line color
+	ctx.lineWidth = 4; // Set graph line width
+
+            for (let i = 0; i < graphData.length; i++) {
+                ctx.lineTo(i, canvas.height - graphData[i]);
+            }
+            ctx.stroke();
+        }
+
+        function updateGraph() {
+            // Push new data point to the graph data array
+            graphData.push(graphData.length * graphSpeed);
+
+            // Check for crash
+            if (graphData[graphData.length - 1] >= crashPoint) {
+                clearInterval(intervalId); // Stop updating the graph
+                isGameRunning = false;
+                cashoutButton.disabled = true;
+                startButton.disabled = false;
+                alert(`Game Over! Multiplier: ${currentMultiplier.toFixed(2)}x`);
+                currentMultiplier = 1.0;
+                graphData = []; // Reset graph data
+                return;
+            }
+
+            // Draw the updated graph
+	drawGraph();
+
+	updateIconPosition();
+
+        }
+
+        function startGame() {
+            if (isGameRunning) return;
+
+            isGameRunning = true;
+            cashoutButton.disabled = false;
+            startButton.disabled = true;
+
+            intervalId = setInterval(updateMultiplier, 100);
+            setInterval(updateGraph, 100); // Start updating the graph
+
+            setTimeout(() => {
+                clearInterval(intervalId);
+                isGameRunning = false;
+                cashoutButton.disabled = true;
+                startButton.disabled = false;
+                alert(`Game Over! Multiplier: ${currentMultiplier.toFixed(2)}x`);
+                currentMultiplier = 1.0;
+                graphData = []; // Reset graph data
+            }, Math.floor(Math.random() * 10000) + 5000); // Simulate random crash between 5-15 seconds
+        }
+
+        cashoutButton.addEventListener('click', () => {
+            if (!isGameRunning) return;
+            clearInterval(intervalId);
+            isGameRunning = false;
+            alert(`Cashed Out! Multiplier: ${currentMultiplier.toFixed(2)}x`);
+            currentMultiplier = 1.0;
+            graphData = []; // Reset graph data
+        });
+
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
