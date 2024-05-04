@@ -138,7 +138,7 @@ cashoutButton.disabled = true;
             currentMultiplier += 0.01;
             multiplierDisplay.textContent = `${currentMultiplier.toFixed(1)}X`;
 			let flyX = currentMultiplier.toFixed(1);
-				flyY += 0.10;
+				flyY += 0.5;
 			
 console.log(flyX, flyY);
 			
@@ -164,7 +164,7 @@ console.log(flyX, flyY);
                 startButton.disabled = false;
                 alert(`Game Over! Multiplier: ${currentMultiplier.toFixed(2)}x`);
                 currentMultiplier = 1.0;
-            }, Math.floor(Math.random() * 1000) + 5000); // Simulate random crash between 5-15 seconds
+            }, Math.floor(Math.random() * 10000) + 5000); // Simulate random crash between 5-15 seconds
         }
 
 startButton.addEventListener('click', startGame);
