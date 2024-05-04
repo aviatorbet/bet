@@ -132,6 +132,12 @@ let currentMultiplier = 1.0;
 let intervalId = null;
 let flyY = 0;
 
+    // Function to reset image position to bottom left corner
+    function resetImagePosition() {
+        image.style.left = "0px";
+        image.style.bottom = "10%";
+    }
+
 cashoutButton.disabled = true;
 
         function updateMultiplier() {
@@ -151,6 +157,8 @@ console.log(flyX, flyY);
         function startGame() {
             if (isGameRunning) return;
 
+		resetImagePosition();
+
             isGameRunning = true;
             cashoutButton.disabled = false;
             startButton.disabled = true;
@@ -169,11 +177,7 @@ console.log(flyX, flyY);
 
 startButton.addEventListener('click', startGame);
 
-    // Function to reset image position to bottom left corner
-    function resetImagePosition() {
-        image.style.left = "0px";
-        image.style.bottom = "10%";
-    }
+
 	
 	// Function to move the image
     function moveImage() {
